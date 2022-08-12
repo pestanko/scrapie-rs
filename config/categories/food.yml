@@ -1,0 +1,270 @@
+name: "food"
+pages:
+  - codename: "alvin"
+    name: "Alvin Week Menu"
+    homepage: "https://www.alvinrestaurace.cz/"
+    url: "https://www.alvinrestaurace.cz/obchod/"
+    query: ".content"
+    filters:
+      cut:
+        after: "*Informace o alergenech získáte u obsluhy, nebo v rozvozovém menu.*"
+        before: "*TÝDENNÍ MENU*"
+      day:
+        enabled: true
+    tags: ["rh", "cz", "medlanky", "ita"]
+
+  - codename: "moravia"
+    name: "Moravia Week Menu"
+    homepage: "https://www.pivovarskarestauracemoravia.cz/"
+    url: "https://www.pivovarskarestauracemoravia.cz/"
+    query: "#block-dennimenu .active"
+    tags: ["rh", "cz", "medlanky"]
+
+  - codename: "himalaya"
+    name: "Himalaya"
+    homepage: "https://www.himalayarestaurace.cz/"
+    url: "https://www.himalayarestaurace.cz/denni-menu/"
+    resolver: "url-only"
+    cache_policy: "no-cache"
+    tags: ["ns", "india", "city"]
+
+  - codename: "charlies_square"
+    name: "Charlie's square"
+    homepage: "https://www.charliessquare.cz/"
+    url: "https://www.charliessquare.cz/menu"
+    xpath: "//div[@class='entry-content']//table[not(contains(@class, 'menu-bar'))]"
+    tags: ["ns", "city", "cz"]
+    filters:
+      html:
+        tables: custom
+
+  - codename: "charlies_mill"
+    name: "Charlie's mill"
+    homepage: "https://www.charliesmill.cz/"
+    url: "https://www.charliesmill.cz/menu"
+    xpath: "//div[@class='entry-content']//table[not(contains(@class, 'menu-bar'))]"
+    tags: ["cz"]
+    filters:
+      html:
+        tables: custom
+
+  - codename: "jean_pauls"
+    name: "Jean Pauls Behounska"
+    homepage: "http://jpbistro.cz/"
+    url: "http://jpbistro.cz/menu/index.php"
+    query: "div.denni-menu"
+    tags: ["ns", "gd", "ita", "city"]
+    filters:
+      day:
+        enabled: true
+      cut:
+        after: "TÝDENNÍ MENU"
+
+  - codename: "jean_pauls_techpark"
+    name: "Jean Pauls Technologicky park"
+    homepage: "http://jpbistro.cz/"
+    url: "https://jpbistro.cz/menu-technopark/index.php"
+    query: "div.denni-menu"
+    tags: ["ita", "tp", "medlanky", "rh"]
+    filters:
+      day:
+        enabled: true
+      cut:
+        after: "TÝDENNÍ MENU"
+
+  - codename: "drevak"
+    name: "U Drevaka"
+    tags: ["fi", "cz"]
+    homepage: "https://udrevaka.cz/"
+    url: "https://udrevaka.cz/"
+    query: "#menu .special-menu"
+
+  - codename: "padagali"
+    name: "Padagali"
+    homepage: "https://padagali.cz/"
+    url: "https://padagali.cz/denni-menu/"
+    tags: ["fi", "india", "asia"]
+    query: ".glf-mor-restaurant-menu-wrapper"
+    filters:
+      day:
+        enabled: true
+      cut:
+        after: "PŘÍLOHA NAVÍC"
+
+  - codename: "nepal"
+    name: "Nepal"
+    url: "https://nepalbrno.cz/weekly-menu/"
+    homepage: "https://nepalbrno.cz/"
+    query: "#Content .the_content_wrapper"
+    tags: ["rh", "india", asia]
+    filters:
+      day:
+        enabled: true
+      cut:
+        after: "Seznam alergenů"
+      html:
+        tables: custom
+
+  - codename: "globus"
+    name: "Globus Brno"
+    url: "https://www.globus.cz/brno/nabidka/restaurace.html"
+    command:
+      content:
+        name: python
+        args:
+          - "-c"
+          - 'import requests; import sys; sys.stdout.buffer.write(requests.get("https://www.globus.cz/brno/nabidka/restaurace.html").content)'
+    homepage: "https://www.globus.cz/brno/"
+    tags: ["rh", "fast"]
+    query: ".restaurant__menu-table-row--active"
+    filters:
+      html:
+        tables: custom
+
+  - codename: "annapurna"
+    name: "Annapurna"
+    homepage: "http://www.indicka-restaurace-annapurna.cz/"
+    url: "http://www.indicka-restaurace-annapurna.cz/"
+    query: "div#T_menu"
+    tags: ["city", "ns", "india", "asia"]
+    filters:
+      day:
+        enabled: true
+      cut:
+        after: "Polední menu podáváme"
+
+  - codename: "krava"
+    name: "Monte Bu"
+    homepage: "https://www.monte-bu.cz/"
+    url: "https://www.monte-bu.cz/menu.php#poledni-section"
+    query: ".menu-details .today"
+    tags: ["rh", "ns", "cz", "steak"]
+    filters:
+      day:
+        enabled: true
+
+  - codename: "sabaidy"
+    name: "Sabaidy"
+    url: "http://www.amphone.eu/restaurace"
+    homepage: "http://www.amphone.eu/restaurace"
+    query: "li:first-child"
+    tags: ["city", "asia", gd]
+    filters:
+      day:
+        enabled: true
+
+  - codename: seminar
+    name: U seminaru
+    url: "http://www.useminaru.cz/menu.php"
+    homepage: "http://www.useminaru.cz/"
+    query: ".maintab .bold"
+    tags: ["city", "cz", "fi", "gd"]
+    filters:
+      day:
+        enabled: true
+      html:
+        tables: custom
+
+  - codename: tripoli
+    name: Tripoli Vankovka
+    url: http://www.tripolivankovka.cz/denni-menu
+    homepage: http://www.tripolivankovka.cz/
+    query: "div.menu-for-one-day"
+    tags: ["city", "ita", "pizza", "vankovka", "ns"]
+    filters:
+      day:
+        enabled: true
+      cut:
+        after: "Nabídka baru"
+
+  - codename: husa-vankovka
+    name: Potrefena husa Vankovka
+    url: https://www.potrefenahusabrno.cz/menu/
+    homepage: https://www.potrefenahusabrno.cz/
+    query: "div.menu-for-one-day"
+    tags: ["city", "cz", "vankovka", "ns"]
+    filters:
+      day:
+        enabled: true
+      cut:
+        after: "Nabídka baru"
+
+  - codename: padowetz
+    name: Padowetz
+    url: http://www.restaurant-padowetz.cz/poledni-menu.htm
+    homepage: http://www.restaurant-padowetz.cz/
+    query: ".tydeniMenu"
+    tags: ["city", "cz", "ns"]
+    filters:
+      day:
+        enabled: true
+      cut:
+        after: "Nápoje k menu"
+      html:
+        tables: custom
+
+  - codename: diva_bara
+    name: Diva bara
+    url: http://www.restauracedivabara.cz/menu__trashed-2/
+    homepage: http://www.restauracedivabara.cz/
+    query: "div.daily-menu"
+    tags: ["fi", "cz"]
+    filters:
+      day:
+        enabled: true
+
+  - codename: na_purkynce
+    name: "Na Purkyňce"
+    url: https://www.menicka.cz/2647-na-purkynce.html
+    homepage: https://www.menicka.cz/2647-na-purkynce.html
+    query: ".menicka"
+    tags: ["rh", "cz"]
+    filters:
+      day:
+        enabled: true
+
+  - codename: spravne_misto
+    name: "Spravne misto"
+    url: https://spravnemisto.cz/denni-menu
+    homepage: https://spravnemisto.cz/
+    query: ".elementor-widget-wrap i .elementor-widget-wrap"
+    tags: ["rh", "cz"]
+    filters:
+      day:
+        enabled: true
+      cut:
+        before: "DENNÍ menu"
+        after: "u nás si necháte chutnat"
+
+  - codename: ubaumanu
+    name: U Baumanu
+    url: https://ubaumannu.cz/menu
+    homepage: https://ubaumannu.cz/
+    tags: ["ceska", "cz"]
+    query: ".Main-content"
+    filters:
+      day:
+        enabled: true
+      cut:
+        before: "Cena za menu včetně polévky je 149 Kč."
+        after: "Menu podáváme od 11 hod. do 14 hod. případně do vyprodání."
+
+
+  - codename: garden_food_concept
+    name: Garden Food Concept
+    homepage: https://www.gardenfoodconcept.cz/
+    tags: ["city", "gd"]
+    url: https://www.gardenfoodconcept.cz/poledni-menu/
+    resolver: url_only
+
+  - codename: stopkova
+    name: Stopkova Plzenska Pivnice
+    homepage: https://www.kolkovna.cz/cs/stopkova-plzenska-pivnice-16
+    tags: ["cz", "gd", "ns", "city"]
+    url: https://www.kolkovna.cz/cs/stopkova-plzenska-pivnice-16/denni-menu
+    query: '.dailyMenuWeek'
+    filters:
+      day:
+        enabled: true
+      html:
+        tables: custom
