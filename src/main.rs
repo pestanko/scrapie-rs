@@ -1,7 +1,9 @@
+use std::collections::HashSet;
+
 use clap::{Parser, Subcommand, Args};
 use tracing::{Level, trace};
 use tracing_subscriber::FmtSubscriber;
-use scrapie_rs::{cfg::app_cfg, pages::categories::load_category};
+use scrapie_rs::{cfg::app_cfg, app, pages::namespace::Selector};
 
 #[derive(Parser)]
 #[clap(name = "srapie-rs")]
@@ -19,21 +21,29 @@ enum Commands {
     /// Run the web server
     Serve {
         /// set web server addr
-        #[clap(short = 'A', long, action)]
+        #[clap(short = 'A', long, value_parser)]
         addr: Option<String>,
     },
     /// Scrape webpages
     Scrape(ScrapeArgs),
+    /// Print list of available webpages
+    PrintPages(ScrapeArgs),
     /// Print configuration
-    PrintConfig {},
-    PrintPages {},
+    PrintConfig,
 }
 
 #[derive(Args)]
 struct ScrapeArgs {
-    /// select by the name
-    #[clap(short = 'N', long, action)]
-    name: Option<String>,
+    /// positional args - names of the pages to scrape
+    names: Vec<String>,   
+
+    /// select by the tags
+    #[clap(short = 'T', long, value_parser)]
+    tags: Vec<String>,
+
+    /// select the category by it's name
+    #[clap(short = 'C', long, value_parser, default_value_t = String::from("food"))]
+    catetory: String,   
 }
 
 
@@ -41,31 +51,37 @@ struct ScrapeArgs {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cli::parse();
 
-    let mut conf = app_cfg::load_config()?;
+    let conf = app_cfg::load_config()?;
     configure_logging();
+
+    let app = app::Application::new(conf);
+
     match &args.command {
         Some(Commands::Serve{ addr}) => {
             trace!("run web server");
             let addr = addr.as_ref()
                 .cloned()
                 .unwrap_or(String::from(":8080"));
-            conf.web.addr = addr.clone();
             println!("Listening on address: {}", addr);
         },
         Some(Commands::Scrape(params)) => {
             trace!("scrape webpages content");
-            println!("Scrape called for: {:?}", params.name)
+            println!("Scrape called for: {:?}", params.names)
         },
-        Some(Commands::PrintConfig {}) => {
+        Some(Commands::PrintConfig) => {
             trace!("printing config");
-            println!("Config: {:#?}", conf);
+            println!("{}", serde_yaml::to_string(app.config())?);
         },
-        Some(Commands::PrintPages {}) => {
+        Some(Commands::PrintPages(params)) => {
             trace!("printing pages");
-            let cat_name = conf.categories.get(0).expect("TODO: Fixme");
-            let cat = load_category(cat_name)?;
-            for page in &cat.pages {
-                println!("{}", page.codename);
+            let sel = Selector { 
+                    category: params.catetory.clone(), 
+                    names: HashSet::from_iter(params.names.iter().cloned()), 
+                    tags:  HashSet::from_iter(params.tags.iter().cloned()),
+                };
+            for page in app.pages(&sel) {
+                // FUTURE: use some nice tabular output
+                println!("{} - {}", page.codename, page.homepage);
             }
         },
         None => {
